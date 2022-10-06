@@ -1,0 +1,78 @@
+name: Sync to S3 Bucket
+description: Create or Update S3 Bucket with Provided Contents
+inputs:
+  bucket-name:
+    required: true
+    description: Desired Bucket Name
+  bucket-expiration:
+    required: false
+    default: '30'
+    description: Desired Bucket Expiration Time in Days
+  bucket-region:
+    required: false
+    default: 'us-east-2'
+    description: Desired Bucket AWS Region
+  bucket-path:
+    required: false
+    default: '/'
+    description: Relative Upload Path
+  aws-access-key-id:
+    required: true
+    description: AWS Access Key ID
+  aws-secret-access-key:
+    required: true
+    description: AWS Secret Access Key
+
+runs:
+  using: "composite"
+  steps:   
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ inputs.aws-access-key-id }}
+        aws-secret-access-key: ${{ inputs.aws-secret-access-key }}
+        aws-region: ${{ inputs.bucket-region }}
+
+    - name: Create Bucket
+      run: |
+        echo $BUCKET_NAME
+        aws s3 mb s3://$BUCKET_NAME --region $REGION
+        aws s3 website s3://$BUCKET_NAME --index-document index.html
+      shell: bash
+      env:
+        BUCKET_NAME: ${{ inputs.bucket_name }}
+        REGION: ${{ inputs.bucket-region }}
+
+    - name: Put Lifecycle
+      run: |
+        cat >lifecycle.xml <<EOL
+          {
+            "Rules": [
+                {
+                    "Expiration": {
+                        "Days": 180
+                    },
+                    "ID": "Expire Old Objects",
+                    "Prefix": "",
+                    "Status": "Enabled",
+                    "NoncurrentVersionExpiration": {
+                        "NoncurrentDays": 180
+                    },
+                    "AbortIncompleteMultipartUpload": {
+                        "DaysAfterInitiation": 180
+                    }
+                }
+            ]
+        }
+        EOL
+        aws s3api put-bucket-lifecycle --bucket $BUCKET_NAME --lifecycle-configuration file://lifecycle.xml
+      shell: bash
+      env:
+        BUCKET_NAME: ${{ inputs.bucket_name }}
+
+    - name: Sync zip to Bucket
+      run: |
+        aws s3 sync ./site/build s3://$BUCKET_NAME --acl public-read
+      shell: bash
+      env:
+        BUCKET_NAME: ${{ inputs.bucket_name }}
