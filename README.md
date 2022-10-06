@@ -1,7 +1,9 @@
 # s3-sync-action
 
+This action syncs the provided S3 bucket with the contents of the provided path
+
 ## Inputs
-```
+```yaml
 bucket-name:
     required: true
     description: Desired Bucket Name
@@ -23,4 +25,7 @@ aws-access-key-id:
 aws-secret-access-key:
     required: true
     description: AWS Secret Access Key
+content-path:
+    required: true
+    description: Path of the Content to Sync
 ```
