@@ -75,8 +75,8 @@ runs:
 
     - name: Sync zip to Bucket
       run: |
-        aws s3 sync $PATH s3://$BUCKET_NAME --acl public-read
+        aws s3 sync $SYNC_PATH s3://$BUCKET_NAME --acl public-read
       shell: bash
       env:
         BUCKET_NAME: ${{ inputs.bucket-name }}
-        PATH: ${{ inputs.content-path }}
+        SYNC_PATH: ${{ inputs.content-path }}
