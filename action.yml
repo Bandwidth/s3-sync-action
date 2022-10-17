@@ -53,16 +53,16 @@ runs:
             "Rules": [
                 {
                     "Expiration": {
-                        "Days": 180
+                        "Days": $BUCKET_EXP
                     },
                     "ID": "Expire Old Objects",
                     "Prefix": "",
                     "Status": "Enabled",
                     "NoncurrentVersionExpiration": {
-                        "NoncurrentDays": 180
+                        "NoncurrentDays": $BUCKET_EXP
                     },
                     "AbortIncompleteMultipartUpload": {
-                        "DaysAfterInitiation": 180
+                        "DaysAfterInitiation": $BUCKET_EXP
                     }
                 }
             ]
@@ -72,6 +72,7 @@ runs:
       shell: bash
       env:
         BUCKET_NAME: ${{ inputs.bucket-name }}
+        BUCKET_EXP: ${{ inputs.bucket-expiration }}
 
     - name: Sync zip to Bucket
       run: |
