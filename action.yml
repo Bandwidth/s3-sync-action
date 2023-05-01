@@ -39,7 +39,8 @@ runs:
     - name: Create Bucket
       run: |
         echo $BUCKET_NAME
-        aws s3 mb s3://$BUCKET_NAME --region $REGION
+        aws s3api create-bucket --bucket $BUCKET_NAME --object-ownership ObjectWriter --region $REGION
+        aws s3api delete-public-access-block --bucket $BUCKET_NAME
         aws s3 website s3://$BUCKET_NAME --index-document index.html
       shell: bash
       env:
