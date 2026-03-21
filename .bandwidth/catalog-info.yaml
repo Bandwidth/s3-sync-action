@@ -1,0 +1,11 @@
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  schemaVersion: v1.0.0
+  name: s3-sync-action-location
+  description: Links to additional entities in the s3-sync-action repository.
+  annotations:
+    github.com/project-slug: Bandwidth/s3-sync-action
+spec:
+  targets:
+    - ./component.yaml
