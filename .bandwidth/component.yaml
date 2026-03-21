@@ -1,0 +1,14 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  schemaVersion: v1.0.0
+  name: s3-sync-action
+  description: This action syncs the provided S3 bucket with the contents of the provided path
+  annotations:
+    github.com/project-slug: Bandwidth/s3-sync-action
+    organization: BW
+    costCenter: Development - Software Infra
+spec:
+  type: GitHub Action
+  owner: github/band-swi
+  lifecycle: Available
